@@ -13,4 +13,3 @@ RUN npm install
 USER nobody
 
 CMD [ "node", "index.js" ]
-

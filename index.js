@@ -143,4 +143,3 @@ client.on("message", (message) => {
 });
 
 client.login(`${env.SECRET}`);
-
