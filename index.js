@@ -28,10 +28,10 @@ tools.fetchUrl = (url) => {
   });
 };
 
-tools.parseMessage = (message) => {
+tools.parseMessageText = (content) => {
 
   // "!cmd example some trailing text" => { cmd: "cmd", trailing: "some trailing text" }
-  const [full, cmd, trailing] = message.content.match(/^\!([^ ]+) \s*(.*?)\s*$/i);
+  const [full, cmd, trailing] = content.match(/^\!([^ ]+) \s*(.*?)\s*$/i);
 
   return { cmd, trailing };
 };
@@ -110,7 +110,7 @@ client.on("message", (message) => {
 
   if (message.author.id === client.user.id) return false;
 
-  const { cmd, trailing } = tools.parseMessage(message);
+  const { cmd, trailing } = tools.parseMessageText(message.content);
   if (cmd === "a" && trailing.length > 0) return commands.setAlarm({ message, ...tools.parseAlarmText(trailing) });
   if (cmd === "t" && trailing.length > 0) return commands.setTimer({ message, ...tools.parseTimerText(trailing) });
 });
