@@ -36,7 +36,7 @@ tools.parseMessage = (message) => {
   return { cmd, trailing };
 };
 
-tools.parseAlarm = (trailing) => {
+tools.parseAlarmText = (trailing) => {
 
   const time = new Date();
 
@@ -55,7 +55,7 @@ tools.parseAlarm = (trailing) => {
   return { timestring, period, timestamp };
 };
 
-tools.parseTimer = (trailing) => {
+tools.parseTimerText = (trailing) => {
 
   const units = { h: "hour", m: "minute", s: "second" };
   // "1h" => [1, "h"], "5m" => [5, "m"], "60s" => [60, "s"]
@@ -75,6 +75,9 @@ tools.parseTimer = (trailing) => {
 // Commands are functions used by the client code that interact with the users or discord based on the data passed to them
 const commands = {};
 
+commands.setAlarm = ({ message, timestring, period, timestamp }) => {
+};
+
 commands.setTimer = ({ message, timestring, timeout }) => {
 
   if (timestring && timeout >= 0 && timeout <= 24 * 60 * 60 * 1000) {
@@ -83,7 +86,7 @@ commands.setTimer = ({ message, timestring, timeout }) => {
     return message.channel.send(`Timer goes off in ${timestring}`, { reply: message.author });
   }
 
-  return message.channel.send(`Usage: \`!t <number>[h | m | s]\`\nExample: '\`!t 20s\`' to start a 20 second timer\nTimers can not be set for more than 24 hours`, { reply: message.author });  
+  return message.channel.send(`\`\`\`Usage: !t NUMBER ['h' | 'm' | 's']\nExample: '!t 20 s' or '!t 20s' to start a 20 second timer\nTimers can not be set for more than 24 hours\`\`\``, { reply: message.author });
 };
 
 // ### Client code
@@ -97,7 +100,8 @@ client.on("message", (message) => {
   if (message.author.id === client.user.id) return false;
 
   const { cmd, trailing } = tools.parseMessage(message);
-  if (cmd === "t" && trailing.length > 0) return commands.setTimer({ message, ...tools.parseTimer(trailing) });
+  if (cmd === "a" && trailing.length > 0) return commands.setAlarm({ message, ...tools.parseAlarmText(trailing) });
+  if (cmd === "t" && trailing.length > 0) return commands.setTimer({ message, ...tools.parseTimerText(trailing) });
 });
 
 client.login(`${env.SECRET}`);
