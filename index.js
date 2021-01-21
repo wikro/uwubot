@@ -31,7 +31,7 @@ tools.fetchUrl = (url) => {
 tools.parseMessage = (message) => {
 
   // "!cmd example some trailing text" => { cmd: "cmd", trailing: "some trailing text" }
-  const [full, cmd, trailing] = message.content.match(/^\!([^ ]+) \s*(.*?)\s*$/i) || ["", ""];
+  const [full, cmd, trailing] = message.content.match(/^\!([^ ]+) \s*(.*?)\s*$/i);
 
   return { cmd, trailing };
 };
@@ -41,15 +41,18 @@ tools.parseAlarm = (trailing) => {
   const time = new Date();
 
   // "22:37" => ["22:37", "22", "37", undefined, undefined], "10:37:55pm" => ["10:37:55 pm", "10", "37", "55", "pm"]
-  const [hours, minutes, seconds, period] = (trailing.match(/^([0-1]?[0-9]|2[0-4])[.:]?([0-5][0-9])[.:]?([0-5][0-9])?\s*([ap]m)?$/i) || []).map((a) => Number(a) || a );
+  const [full, hours, minutes, seconds, period] = (trailing.match(/^([0-1]?[0-9]|2[0-4])[.:]?([0-5][0-9])[.:]?([0-5][0-9])?\s*([ap]m)?$/i) || []).map((a) => Number(a) || a);
 
-  hours && end.setHours(hours);
-  minutes && end.setMinutes(minutes);
-  seconds && end.setSeconds(seconds);
+  hours && time.setHours(hours);
+  minutes && time.setMinutes(minutes);
+  seconds && time.setSeconds(seconds);
 
-  if (end.getHours() < 13 && format === "pm") end.setHours(12 + end.getHours());
+  if (time.getHours() < 13 && format === "pm") time.setHours(12 + time.getHours());
 
-  return { time, period };
+  const timestamp = time.getTime();
+  const timestring = `${hours}:${minutes}:${seconds}${period ? " " + period : ""}`;
+
+  return { timestring, period, timestamp };
 };
 
 tools.parseTimer = (trailing) => {
