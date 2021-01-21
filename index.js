@@ -62,7 +62,7 @@ tools.parseTimerText = (trailing) => {
   const [full, time, suffix] = (trailing.match(/^(\d+)\s*([hms])?$/i) || []).map((t) => Number(t) || t);
   const units = { h: "hour", m: "minute", s: "second" };
 
-  let timeout = time * 1000 // setTimeout and other js functions use milliseconds, we initially assume the user means seconds
+  let timeout = time * 1000 // setTimeout and other js functions use milliseconds, we initially assume the user means seconds and multiply time by 1000
   if (suffix === "m" || suffix === "h") timeout = timeout * 60; // if the user suffixed their input with 'm' representing minutes or 'h' representing hours, we multiply timeout by 60
   if (suffix === "h") timeout = timeout * 60; // if the user suffixed their input with 'h' representing hours, we multiply timeout by 60 again
 
