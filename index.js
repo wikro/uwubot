@@ -101,7 +101,7 @@ commands.setTimer = ({ message, timestring, timeout }) => {
 };
 
 // ### Client code
-// Client code is the wiring between discord.js and the bot, i.e. defining functions for events from Discord
+// Client code is the wiring between Discord and the bot, i.e. defining functions for events sent by Discord
 const client = new Client();
 
 client.on("ready", () => console.info("Discord client ready"));
