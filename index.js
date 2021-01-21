@@ -45,7 +45,8 @@ tools.parseAlarmText = (trailing) => {
 
   hours && time.setHours(hours);
   minutes && time.setMinutes(minutes);
-  seconds && time.setSeconds(seconds);
+
+  time.setSeconds(seconds || 0);
 
   if (time.getHours() < 13 && format === "pm") time.setHours(12 + time.getHours());
 
@@ -76,6 +77,16 @@ tools.parseTimerText = (trailing) => {
 const commands = {};
 
 commands.setAlarm = ({ message, timestring, period, timestamp }) => {
+
+  const timeout = timestamp - Date.now();
+
+  if (timestring && timeout >= 0) {
+    setTimeout(() => message.channel.send(`Ding ding! It's ${timestring}!`, { reply: message.author }), timeout);
+
+    return message.channel.send(`Alarm set for ${timestring}`, { reply: message.author });
+  }
+
+  return message.channel.send(`\`\`\`Usage: !a HH:MM[:SS]['am' | 'pm']\nExample: '!a 22:37' or '!a 10:37pm' to set an alarm for 22:37:00/10:37:00pm\nAlarms default to 00 seconds if not specified, like for example '!a 10:37:55am'\`\`\``, { reply: message.author });
 };
 
 commands.setTimer = ({ message, timestring, timeout }) => {
